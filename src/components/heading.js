@@ -18,7 +18,7 @@ export default function Heading(props) {
     <motion.section className="heading">
       <motion.p className="heading--copy">Gallery</motion.p>
       <motion.p className="heading--undercopy">
-        View a collection of images from our beautiful home:
+        Take a look at this collection of images of something interesting
       </motion.p>
     </motion.section>
   )
