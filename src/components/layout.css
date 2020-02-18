@@ -11,6 +11,12 @@
   background-color: #f7f7f7;
 }
 
+.carousel:focus {
+  /* border: 5px solid orange; */
+  background: "red";
+  outline: none;
+  box-sizing: border-box;
+}
 .heading--copy {
   font-weight: 900;
   font-size: 3em;
@@ -33,7 +39,7 @@
 
 .card {
   border-radius: 25px;
-  margin: 0.5rem;
+  margin: 8px;
   box-sizing: border-box;
 }
 

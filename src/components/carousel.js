@@ -1,85 +1,112 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 import { useGlobal } from "reactn"
+import Arrow from "../images/arrow.svg"
 
-function Card(props) {
-  const [global, setGlobalState] = useGlobal()
-
-  const [open, setOpen] = React.useState(false)
-
-  const cardClick = () => {
-    setOpen(!open)
-  }
-
-  const onHoverStart = () => {
-    setGlobalState({
-      activeCarousel: false,
-    })
-    console.log(global.activeCarousel)
-  }
-
-  const onHoverEnd = () => {
-    setGlobalState({
-      activeCarousel: true,
-    })
-    console.log(global.activeCarousel)
-  }
-
+export function CarouselCard(props) {
   return (
-    <motion.div
-      onClick={cardClick}
+    <div
       className="card"
       style={{
         height: "400px",
         backgroundColor: props.color,
         float: "left",
+        minWidth: "900px",
       }}
-      animate={{ minWidth: open ? "400px" : "300px" }}
-      onHoverEnd={onHoverEnd}
-      onHoverStart={onHoverStart}
-    ></motion.div>
+    ></div>
   )
 }
 
+const keyCodeLeft = 37
+const keyCodeRight = 39
+
 export default function Carousel(props) {
-  const [global, setGlobalState] = useGlobal()
+  const [currentPageIndex, setCurrentPageIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    console.log("useEffect log " + (currentPageIndex + 1))
+  })
+
   return (
-    <motion.div
+    <div
+      className="carousel"
+      onKeyUp={e => {
+        if (e.keyCode === keyCodeLeft) {
+          const previousPage = getPreviousPage(currentPageIndex)
+          setCurrentPageIndex(previousPage)
+        } else if (e.keyCode === keyCodeRight) {
+          const nextPage = getNextPage(currentPageIndex, props.children.length)
+          setCurrentPageIndex(nextPage)
+        }
+      }}
+      tabIndex={0}
       style={{
-        width: "100%",
+        width: props.width,
         margin: "0 auto",
-        float: "left",
+        overflow: "hidden",
+        position: "relative",
       }}
     >
+      {" "}
+      <motion.div style={{ display: "flex" }}>
+        <motion.div
+          onClick={() => {
+            const previousPage = getPreviousPage(currentPageIndex)
+            setCurrentPageIndex(previousPage)
+          }}
+          style={{
+            backgroundColor: "#e8e8e8",
+            height: "50px",
+            width: "50px",
+            transform: "rotate(180deg)",
+            backgroundImage: `url(${Arrow})`,
+            marginRight: "0.5em",
+          }}
+        ></motion.div>
+        <motion.div
+          onClick={() => {
+            const nextPage = getNextPage(
+              currentPageIndex,
+              props.children.length
+            )
+            setCurrentPageIndex(nextPage)
+          }}
+          style={{
+            backgroundColor: "#e8e8e8",
+            height: "50px",
+            width: "50px",
+            backgroundImage: `url(${Arrow})`,
+          }}
+        ></motion.div>
+      </motion.div>
       <motion.div
         style={{
-          overflow: "hidden", //         <---
           position: "relative",
-          margin: "0 auto",
-          width: "80%",
-          left: "-100px",
+          width: "1000%",
+          height: "100%",
         }}
+        animate={{ left: currentPageIndex * -916 }}
+        transition={{ duration: 0.5 }}
       >
-        <motion.div
-          style={{
-            position: "relative",
-            // left: "-100px",
-            width: "200%",
-            height: "100%",
-            left: global.activeCarousel ? "300px" : "0px",
-          }}
-          animate={{ left: "300px" }}
-          transition={{ duration: 3, flip: Infinity, ease: "linear" }}
-        >
-          <Card color="#f64747"></Card>
-          <Card color="#db0a5b"></Card>
-          <Card color="#cf000f"></Card>
-          <Card color="#e74c3c"></Card>
-          <Card color="#d64541"></Card>
-          <Card color="#ff9478"></Card>
-          <Card color="#d24d57"></Card>
-        </motion.div>
+        {props.children}
       </motion.div>
-    </motion.div>
+    </div>
   )
+}
+
+function getPreviousPage(page) {
+  if (page >= 1) {
+    return page - 1
+  } else {
+    return 0
+  }
+}
+
+function getNextPage(page, maxPages) {
+  const maxPageIndex = maxPages - 1
+  if (page < maxPageIndex) {
+    return page + 1
+  } else {
+    return maxPageIndex
+  }
 }
